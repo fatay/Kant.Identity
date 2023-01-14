@@ -1,5 +1,5 @@
 # Kant.Identity
-#### User Ops with Minimal APIs, Fluent Validation, Microsoft Identity, Serilog and SEQ 
+#### User Ops with .NET6 Minimal APIs, Fluent Validation, Microsoft Identity, Serilog and SEQ 
 
 ## Features
 
