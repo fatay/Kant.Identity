@@ -23,4 +23,4 @@ and start the application on Visual Studio or using .NET CLI;
 dotnet run
 ```
 
-That's it!
+That's It!
