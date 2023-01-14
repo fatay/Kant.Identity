@@ -7,7 +7,7 @@
 - SEQ & Serilog used for logging system; it's compatible for file logging.
 - App created with Minimal API so it is lightweight.
 - You can also run on docker.
-- Swagger Support
+- Swagger API Documentation - OpenAPI - Support
 
 ## Installation
 
