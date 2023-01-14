@@ -17,7 +17,7 @@ To try in local environment, install the seq image and run on Docker container:
 docker run --name seq -d --restart unless-stopped -e ACCEPT_EULA=Y -p 5341:80 datalust/seq:latest
 ```
 
-and start the application on Visual Studio or start application by using .NET CLI;
+and start the application on Visual Studio or using .NET CLI;
 
 ```sh
 dotnet run
