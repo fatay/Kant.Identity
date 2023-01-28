@@ -1,4 +1,4 @@
-# Kant.Identity
+# Identite
 #### Authorization & Authentication Operations using .NET6 Minimal APIs, Fluent Validation, Microsoft Identity, Serilog and SEQ
 
 ## Features
