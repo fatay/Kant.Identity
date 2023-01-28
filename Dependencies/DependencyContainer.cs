@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Kant.Identity.Entities;
+using Identite.Entities;
 using Microsoft.AspNetCore.Identity;
 
-namespace Kant.Identity.Dependencies;
+namespace Identite.Dependencies;
 
 public class DependencyContainer
 {

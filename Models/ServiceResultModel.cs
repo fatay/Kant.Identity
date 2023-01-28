@@ -1,6 +1,6 @@
 ﻿using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Kant.Identity.Models;
+namespace Identite.Models;
 
 public class ServiceResultModel<T>
 {

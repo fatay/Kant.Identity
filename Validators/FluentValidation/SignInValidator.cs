@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using Kant.Identity.Models.ResultModels;
+using Identite.Models.ResultModels;
 
-namespace Kant.Identity.Validators.FluentValidation;
+namespace Identite.Validators.FluentValidation;
 
 public sealed class SignInValidator : AbstractValidator<SignInResultModel>
 {

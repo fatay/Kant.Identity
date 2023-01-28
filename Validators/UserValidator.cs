@@ -1,7 +1,7 @@
-﻿using Kant.Identity.Entities;
+﻿using Identite.Entities;
 using Microsoft.AspNetCore.Identity;
 
-namespace Kant.Identity.Validators;
+namespace Identite.Validators;
 
 public class UserValidator : IUserValidator<User>
 {

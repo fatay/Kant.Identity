@@ -1,11 +1,11 @@
 using AutoMapper;
-using Kant.Identity.Context;
-using Kant.Identity.Dependencies;
-using Kant.Identity.Entities;
-using Kant.Identity.Models;
-using Kant.Identity.Models.ResultModels;
-using Kant.Identity.Validators;
-using Kant.Identity.Validators.FluentValidation;
+using Identite.Context;
+using Identite.Dependencies;
+using Identite.Entities;
+using Identite.Models;
+using Identite.Models.ResultModels;
+using Identite.Validators;
+using Identite.Validators.FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +23,7 @@ ConfigurationManager configuration = builder.Configuration;
 // Add Logging
 builder.Host.UseSerilog((hostContext, services, configuration) => {
         configuration.WriteTo.Seq("http://localhost:5341")
-                     .Enrich.WithProperty("AppName", "Kant.Identity")
+                     .Enrich.WithProperty("AppName", "Identite")
                      .Enrich.WithProperty("Environment", "development");
 });
 

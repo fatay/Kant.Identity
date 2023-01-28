@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Kant.Identity.Entities;
+namespace Identite.Entities;
 
 public class User : IdentityUser<long>
 {

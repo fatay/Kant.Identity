@@ -1,4 +1,4 @@
-﻿namespace Kant.Identity.Models;
+﻿namespace Identite.Models;
 
 public class AppSettingsModel
 {

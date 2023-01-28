@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Kant.Identity.Models
+namespace Identite.Models
 {
     public class UpdatePasswordModel
     {

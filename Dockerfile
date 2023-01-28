@@ -7,16 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["Kant.Identity.csproj", "."]
-RUN dotnet restore "./Kant.Identity.csproj"
+COPY ["Identite.csproj", "."]
+RUN dotnet restore "./Identite.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "Kant.Identity.csproj" -c Release -o /app/build
+RUN dotnet build "Identite.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Kant.Identity.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Identite.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Kant.Identity.dll"]
+ENTRYPOINT ["dotnet", "Identite.dll"]

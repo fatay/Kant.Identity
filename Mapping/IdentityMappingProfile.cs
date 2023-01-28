@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Kant.Identity.Entities;
-using Kant.Identity.Models.ResultModels;
+using Identite.Entities;
+using Identite.Models.ResultModels;
 
-namespace Kant.Identity.Mapping;
+namespace Identite.Mapping;
 
 public class IdentityMappingProfile : Profile
 {

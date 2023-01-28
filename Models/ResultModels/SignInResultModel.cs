@@ -1,4 +1,4 @@
-﻿namespace Kant.Identity.Models.ResultModels;
+﻿namespace Identite.Models.ResultModels;
 
 public class SignInResultModel
 {

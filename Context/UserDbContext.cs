@@ -1,8 +1,8 @@
-﻿using Kant.Identity.Entities;
+﻿using Identite.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Kant.Identity.Context;
+namespace Identite.Context;
 
 public class UserDbContext : IdentityDbContext<User,Role,long>
 {
