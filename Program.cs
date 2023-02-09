@@ -109,31 +109,30 @@ app.UseAuthorization();
 
 app.MapPost("/signup", async (UserManager<User> userManager, IMapper mapper, [FromBody] SignUpResultModel request) =>
 {
-    Log.Information("[SignUp][RequestStart] : {@Request}", request);
+    #region BeginRequest
+
+    Log.Information("[SignUp][BeginRequest] : {@Request}", request);
+    var result = new ServiceResultModel<User>();
+
+    #endregion
 
     #region Validations
-
-    var validationWarnings = new List<KeyValuePair<string, string>>();
 
     var validationResult = new SignUpValidator().Validate(request);
 
     if (!validationResult.IsValid)
     {
-        var fluentValidationWarnings = validationResult.Errors.Select(s => new KeyValuePair<string, string>(s.ErrorCode, s.ErrorMessage)).ToList();
-        validationWarnings.AddRange(fluentValidationWarnings);
+        var fluentValidationWarnings = validationResult.Errors.Select(s => new ErrorModel { ErrorCode = s.ErrorCode, ErrorMessage = s.ErrorMessage });
+        result.AddError(fluentValidationWarnings);
     }
 
     if (request.Password != request.PasswordConfirm)
-    {
-        var passwordValidationError = new KeyValuePair<string, string>("PasswordsDoNotMatch", "Passwords do not match.");
-        validationWarnings.Add(passwordValidationError);
-    }
+        result.AddError("PasswordsDoNotMatch", "Passwords do not match.");
 
-    if (validationWarnings.Any())
+    if (result.AnyErrors())
     {
-        Log.Warning("[SignUp][RequestEnd] : Request was terminated with validation warnings {@Warnings} {@Request}", validationWarnings, request);
-
-        return new ServiceResultModel<User>(validationWarnings);
+        Log.Warning("[SignUp][EndRequest] : Request was terminated with validation warnings {@Warnings} {@Request}", result.Errors, request);
+        return new ServiceResultModel<User>();
     }
 
     #endregion
@@ -146,38 +145,40 @@ app.MapPost("/signup", async (UserManager<User> userManager, IMapper mapper, [Fr
 
     if (identityResult.Succeeded)
     {
-        Log.Information("[SignUp][RequestEnd] : User created successfully {@UserName} {@Request}", request.UserName, request);
-
-        return new ServiceResultModel<User>();
+        Log.Information("[SignUp][EndRequest] : User created successfully {@UserName} {@Request}", request.UserName, request);
     }
     else
     {
-        var identityErrors = identityResult.Errors.Select(s => new KeyValuePair<string, string>(s.Code, s.Description)).ToList();
+        var identityErrors = identityResult.Errors.Select(s => new ErrorModel { ErrorCode = s.Code, ErrorMessage = s.Description });
 
-        Log.Warning("[SignUp][RequestEnd] : Request was terminated with identity errors {@Errors} {@Request}", identityErrors, request);
+        result.AddError(identityErrors);
 
-        return new ServiceResultModel<User>(identityErrors);
+        Log.Warning("[SignUp][EndRequest] : Request was terminated with identity errors {@Errors} {@Request}", identityErrors, request);
     }
 
-    #endregion
+    return new ServiceResultModel<User>();
 
+    #endregion
 
 }).WithName("Sign Up");
 
 app.MapPost("/signin", async (UserManager<User> userManager, SignInManager<User> signInManager, [FromBody] SignInResultModel request) =>
 {
-    Log.Information("[SignIn][RequestStart] : {@Request}", request);
+    #region BeginRequest
+
+    Log.Information("[SignIn][BeginRequest] : {@Request}", request);
+    var result = new ServiceResultModel<User>();
+
+    #endregion
 
     #region Validations
-
-    var validationWarnings = new List<KeyValuePair<string, string>>();
 
     var validationResult = new SignInValidator().Validate(request);
 
     if (!validationResult.IsValid)
     {
-        var fluentValidationErrors = validationResult.Errors.Select(s => new KeyValuePair<string, string>(s.ErrorCode, s.ErrorMessage)).ToList();
-        validationWarnings.AddRange(fluentValidationErrors);
+        var fluentValidationWarnings = validationResult.Errors.Select(s => new ErrorModel { ErrorCode = s.ErrorCode, ErrorMessage = s.ErrorMessage });
+        result.AddError(fluentValidationWarnings);
     }
 
     var findUserByMail = await userManager.FindByEmailAsync(request.MailOrUserName);
@@ -186,65 +187,61 @@ app.MapPost("/signin", async (UserManager<User> userManager, SignInManager<User>
     var user = findUserByMail ?? findUserByName;
 
     if (user == null)
-    {
-        var userNotFoundWarning = new KeyValuePair<string, string>("WrongUserNameOrPassword", "Wrong username or password.");
-        validationWarnings.Add(userNotFoundWarning);
-    }
+        result.AddError("WrongUserNameOrPassword", "Wrong username or password.");
 
-    if (validationWarnings.Any())
+    if (result.AnyErrors())
     {
-        Log.Warning("[SignIn][RequestEnd] : Request was terminated with validation warnings {@Warnings} {@Request}", validationWarnings, request);
+        Log.Warning("[SignIn][EndRequest] : Request was terminated with validation warnings {@Warnings} {@Request}", result.Errors, request);
 
-        return new ServiceResultModel<User>(validationWarnings);
+        return new ServiceResultModel<User>();
     }
 
     #endregion
 
     #region User Operations
-    
+
     var identityResult = await signInManager.PasswordSignInAsync(user, request.Password, request.RememberMe, false);
 
     if (identityResult.Succeeded)
     {
-        Log.Information("[SignIn][RequestEnd] : User signed in successfully {@UserName} {@Request}", request.MailOrUserName, request);
+        Log.Information("[SignIn][EndRequest] : User signed in successfully {@UserName} {@Request}", request.MailOrUserName, request);
 
         return new ServiceResultModel<User>();
     }
     else
     {
-        var identityErrors = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("WrongUserNameOrPassword", "Wrong username or password.") };
+        result.AddError("WrongUserNameOrPassword", "Wrong username or password.");
 
-        Log.Warning("[SignUp][RequestEnd] : Request was terminated with identity errors {@Errors} {@Request}", identityErrors, request);
+        Log.Warning("[SignUp][EndRequest] : Request was terminated with identity errors {@Errors} {@Request}", result.GetErrors(), request);
 
-        return new ServiceResultModel<User>(identityErrors);
+        return new ServiceResultModel<User>();
     }
 
     #endregion
-
 
 }).WithName("Sign In");
 
 app.MapPost("/resetpassword", async (IOptions<AppSettingsModel> options, UserManager<User> userManager, SignInManager<User> signInManager, [FromBody] string mailAddress) =>
 {
-    Log.Information("[ResetPassword][RequestStart] : {@Request}", mailAddress);
+    #region BeginRequest
+
+    Log.Information("[ResetPassword][BeginRequest] : {@Request}", mailAddress);
+    var result = new ServiceResultModel<User>();
+
+    #endregion
 
     #region Validations
-
-    var validationWarnings = new List<KeyValuePair<string, string>>();
 
     var user = await userManager.FindByEmailAsync(mailAddress);
 
     if (user == null)
-    {
-        var userNotFoundWarning = new KeyValuePair<string, string>("WrongUserNameOrPassword", "Wrong username or password.");
-        validationWarnings.Add(userNotFoundWarning);
-    }
+        result.AddError("WrongUserNameOrPassword", "Wrong username or password.");
 
-    if (validationWarnings.Any())
+    if (result.AnyErrors())
     {
-        Log.Warning("[SignIn][RequestEnd] : Request was terminated with validation warnings {@Warnings} {@Request}", validationWarnings, mailAddress);
+        Log.Warning("[SignIn][EndRequest] : Request was terminated with validation warnings {@Warnings} {@Request}", result.GetErrors(), mailAddress);
 
-        return new ServiceResultModel<User>(validationWarnings);
+        return new ServiceResultModel<User>();
     }
 
     #endregion
@@ -280,42 +277,38 @@ app.MapPost("/resetpassword", async (IOptions<AppSettingsModel> options, UserMan
 
     await smtpClient.SendMailAsync(mailMessage);
 
-    Log.Information("[ResetPassword][RequestEnd] : {@Request}", mailAddress);
+    Log.Information("[ResetPassword][EndRequest] : {@Request}", mailAddress);
 
     return new ServiceResultModel<User>();
 
     #endregion
     
-
 }).WithName("ResetPassword");
 
 app.MapPost("/updatepassword", async (UserManager<User> userManager, [FromBody] UpdatePasswordModel request) =>
 {
-    Log.Information("[UpdatePassword][RequestStart] : {@Request}", request);
+    #region BeginRequest 
+
+    Log.Information("[UpdatePassword][BeginRequest] : {@Request}", request);
+    var result = new ServiceResultModel<User>();
+
+    #endregion
 
     #region Validations
-
-    var validationWarnings = new List<KeyValuePair<string, string>>();
 
     var user = await userManager.FindByIdAsync(request.UserId);
 
     if (user == null)
-    {
-        var userNotFoundWarning = new KeyValuePair<string, string>("WrongUserNameOrPassword", "Wrong username or password.");
-        validationWarnings.Add(userNotFoundWarning);
-    }
+        result.AddError("WrongUserNameOrPassword", "Wrong username or password.");
 
     if (request.Password != request.PasswordConfirm)
-    {
-        var passwordValidationError = new KeyValuePair<string, string>("PasswordsDoNotMatch", "Passwords do not match.");
-        validationWarnings.Add(passwordValidationError);
-    }
+        result.AddError("PasswordsDoNotMatch", "Passwords do not match.");
 
-    if (validationWarnings.Any())
+    if (result.AnyErrors())
     {
-        Log.Warning("[SignIn][RequestEnd] : Request was terminated with validation warnings {@Warnings} {@Request}", validationWarnings, request);
+        Log.Warning("[SignIn][EndRequest] : Request was terminated with validation warnings {@Warnings} {@Request}", result.GetErrors(), request);
 
-        return new ServiceResultModel<User>(validationWarnings);
+        return new ServiceResultModel<User>();
     }
 
     #endregion
@@ -326,12 +319,17 @@ app.MapPost("/updatepassword", async (UserManager<User> userManager, [FromBody] 
 
     if (identityResult.Succeeded)
     {
+        Log.Information("[SignIn][UpdatePassword] : User was updated password successfully {@Warnings} {@Request}", result.GetErrors(), request);
+
         return new ServiceResultModel<User>();
     }
     else
     {
-        var errors = identityResult.Errors.Select(s => new KeyValuePair<string, string>(s.Code, s.Description)).ToList();
-        return new ServiceResultModel<User>(errors);
+        var errors = identityResult.Errors.Select(s => new ErrorModel { ErrorCode = s.Code, ErrorMessage = s.Description });
+
+        Log.Warning("[SignIn][UpdatePassword] : Request was terminated with identity errors {@Warnings} {@Request}", result.GetErrors(), request);
+
+        return new ServiceResultModel<User>();
     }
 
     #endregion
@@ -340,13 +338,18 @@ app.MapPost("/updatepassword", async (UserManager<User> userManager, [FromBody] 
 
 app.MapPost("/logout", async (SignInManager<User> signInManager, [FromBody] SignInResultModel request) =>
 {
-    Log.Information("[Logout][RequestStart] : {@Request}", request);
+    #region BeginRequest
+
+    Log.Information("[Logout][BeginRequest] : {@Request}", request);
+    var result = new ServiceResultModel<User>();
+
+    #endregion
 
     #region User Operations
 
     await signInManager.SignOutAsync();
 
-    Log.Information("[Logout][RequestEnd] : {@Request}", request);
+    Log.Information("[Logout][EndRequest] : {@Request}", request);
 
     #endregion
 

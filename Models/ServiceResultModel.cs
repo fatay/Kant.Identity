@@ -1,29 +1,41 @@
-﻿using Swashbuckle.AspNetCore.SwaggerGen;
-
-namespace Identite.Models;
+﻿namespace Identite.Models;
 
 public class ServiceResultModel<T>
 {
-    public ServiceResultModel()
+    public ServiceResultModel() => Errors = new List<ErrorModel>();
+
+    public ServiceResultModel(T data) => Data = data;
+
+    public List<ErrorModel> GetErrors() => Errors;
+
+    public bool AnyErrors() => Errors.Count > 0;
+
+    public void AddError(string errorCode, string errorMessage)
     {
-        Succeeded = true;
+        Errors.Add(new ErrorModel
+        {
+            ErrorCode = errorCode,
+            ErrorMessage = errorMessage
+        });
     }
 
-    public ServiceResultModel(T data, string successMessage = null)
-    {
-        Succeeded = true;
-        Message = successMessage;
-        Data = data;
-    }
+    public void AddError(ErrorModel error) => Errors.Add(error);
 
-    public ServiceResultModel(List<KeyValuePair<string, string>> errors)
-    {
-        Succeeded = false;
-        Errors = errors;
-    }
+    public void AddError(List<ErrorModel> errors) => Errors.AddRange(errors);
 
-    public bool Succeeded { get; set; }
-    public string Message { get; set; }
-    public List<KeyValuePair<string, string>> Errors { get; set; }
+    public void AddError(IEnumerable<ErrorModel> errors) => Errors.AddRange(errors.ToList());
+
+    public bool IsSucceed => Errors.Count > 0;
+
+    public List<ErrorModel> Errors { get; set; }
+
     public T Data { get; set; }
 }
+
+public class ErrorModel
+{
+    public string ErrorCode { get; set; } = string.Empty;
+
+    public string ErrorMessage { get; set; } = string.Empty;
+}
+
