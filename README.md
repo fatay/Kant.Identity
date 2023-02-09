@@ -11,7 +11,7 @@
 
 ## Installation
 
-To try in local environment, install the seq image and run on Docker container:
+In appsettings.json file, we have a UserDbConnectionString setting. After setting the connection string, install the seq image and run on Docker container:
 
 ```sh
 docker run --name seq -d --restart unless-stopped -e ACCEPT_EULA=Y -p 5341:80 datalust/seq:latest
