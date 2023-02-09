@@ -25,7 +25,7 @@ public class ServiceResultModel<T>
 
     public void AddError(IEnumerable<ErrorModel> errors) => Errors.AddRange(errors.ToList());
 
-    public bool IsSucceed => Errors.Count > 0;
+    public bool IsSucceed => Errors.Count == 0;
 
     public List<ErrorModel> Errors { get; set; }
 
