@@ -6,7 +6,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443;http://+:80
-      - UserDbConnectionString=Server=127.0.0.1;Port=5432;Database=Identite;UserId=postgres;Password=postgres;
+      - UserDbConnectionString=Server=host.docker.internal;Port=5432;Database=Identite;UserId=postgres;Password=postgres;
     ports:
       - "5001:80"
     volumes:
