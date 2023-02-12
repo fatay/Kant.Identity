@@ -5,7 +5,7 @@
 
 - Application uses Fluent Validation for model validations.
 - SEQ & Serilog used for logging system; it's compatible for file logging.
-- App created with Minimal API so it is lightweight.
+- App created with Minimal API so it has minimal design.
 - You can also run on docker.
 - Swagger API Documentation - OpenAPI support
 
