@@ -11,7 +11,7 @@
 
 ## Installation
 
-In appsettings.json file, we have a UserDbConnectionString setting. After setting the connection string, start the application on Visual Studio or you can use .NET CLI;
+In appsettings.json file, we have a UserDbConnectionString setting. After configuring this, start the application on Visual Studio or you can use .NET CLI;
 
 ```sh
 dotnet run
