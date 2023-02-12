@@ -10,6 +10,8 @@ services:
       - postgres
     networks:
       - identite-network
+    depends_on:
+      - postgres
 
   postgres:
     image: postgres

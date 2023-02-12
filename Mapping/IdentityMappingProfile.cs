@@ -8,6 +8,11 @@ public class IdentityMappingProfile : Profile
 {
 	public IdentityMappingProfile()
 	{
-        CreateMap<User, SignUpResultModel>().ReverseMap();
+        CreateMap<User, SignUpResultModel>()
+       .ForMember(
+            dest => dest.MailAddress,
+            opt => opt.MapFrom(src => src.Email)
+        )
+        .ReverseMap();
     }
 }

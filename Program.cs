@@ -22,7 +22,7 @@ ConfigurationManager configuration = builder.Configuration;
 
 // Add Logging
 builder.Host.UseSerilog((hostContext, services, configuration) => {
-        configuration.WriteTo.Seq("http://localhost:5341")
+        configuration.WriteTo.Seq("http://host.docker.internal:5341")
                      .Enrich.WithProperty("AppName", "Identite")
                      .Enrich.WithProperty("Environment", "development");
 });
@@ -132,7 +132,7 @@ app.MapPost("/signup", async (UserManager<User> userManager, IMapper mapper, [Fr
     if (result.AnyErrors())
     {
         Log.Warning("[SignUp][EndRequest] : Request was terminated with validation warnings {@Warnings} {@Request}", result.Errors, request);
-        return new ServiceResultModel<User>();
+        return result;
     }
 
     #endregion
@@ -156,7 +156,7 @@ app.MapPost("/signup", async (UserManager<User> userManager, IMapper mapper, [Fr
         Log.Warning("[SignUp][EndRequest] : Request was terminated with identity errors {@Errors} {@Request}", identityErrors, request);
     }
 
-    return new ServiceResultModel<User>();
+    return result;
 
     #endregion
 
@@ -192,8 +192,7 @@ app.MapPost("/signin", async (UserManager<User> userManager, SignInManager<User>
     if (result.AnyErrors())
     {
         Log.Warning("[SignIn][EndRequest] : Request was terminated with validation warnings {@Warnings} {@Request}", result.Errors, request);
-
-        return new ServiceResultModel<User>();
+        return result;
     }
 
     #endregion
@@ -205,17 +204,15 @@ app.MapPost("/signin", async (UserManager<User> userManager, SignInManager<User>
     if (identityResult.Succeeded)
     {
         Log.Information("[SignIn][EndRequest] : User signed in successfully {@UserName} {@Request}", request.MailOrUserName, request);
-
-        return new ServiceResultModel<User>();
     }
     else
     {
         result.AddError("WrongUserNameOrPassword", "Wrong username or password.");
 
         Log.Warning("[SignUp][EndRequest] : Request was terminated with identity errors {@Errors} {@Request}", result.GetErrors(), request);
-
-        return new ServiceResultModel<User>();
     }
+
+    return result;
 
     #endregion
 
@@ -240,8 +237,7 @@ app.MapPost("/resetpassword", async (IOptions<AppSettingsModel> options, UserMan
     if (result.AnyErrors())
     {
         Log.Warning("[SignIn][EndRequest] : Request was terminated with validation warnings {@Warnings} {@Request}", result.GetErrors(), mailAddress);
-
-        return new ServiceResultModel<User>();
+        return result;
     }
 
     #endregion
@@ -279,7 +275,7 @@ app.MapPost("/resetpassword", async (IOptions<AppSettingsModel> options, UserMan
 
     Log.Information("[ResetPassword][EndRequest] : {@Request}", mailAddress);
 
-    return new ServiceResultModel<User>();
+    return result;
 
     #endregion
     
@@ -307,8 +303,7 @@ app.MapPost("/updatepassword", async (UserManager<User> userManager, [FromBody] 
     if (result.AnyErrors())
     {
         Log.Warning("[SignIn][EndRequest] : Request was terminated with validation warnings {@Warnings} {@Request}", result.GetErrors(), request);
-
-        return new ServiceResultModel<User>();
+        return result;
     }
 
     #endregion
@@ -320,17 +315,15 @@ app.MapPost("/updatepassword", async (UserManager<User> userManager, [FromBody] 
     if (identityResult.Succeeded)
     {
         Log.Information("[SignIn][UpdatePassword] : User was updated password successfully {@Warnings} {@Request}", result.GetErrors(), request);
-
-        return new ServiceResultModel<User>();
     }
     else
     {
         var errors = identityResult.Errors.Select(s => new ErrorModel { ErrorCode = s.Code, ErrorMessage = s.Description });
 
         Log.Warning("[SignIn][UpdatePassword] : Request was terminated with identity errors {@Warnings} {@Request}", result.GetErrors(), request);
-
-        return new ServiceResultModel<User>();
     }
+
+    return result;
 
     #endregion
 
