@@ -1,0 +1,28 @@
+version: '3.4'
+
+services:
+  identite:
+    image: ${DOCKER_REGISTRY-}identite
+    build:
+      context: .
+      dockerfile: Dockerfile
+    links:
+      - postgres
+    networks:
+      - identite-network
+
+  postgres:
+    image: postgres
+
+  seq:
+    image: datalust/seq:latest
+    networks:
+      - identite-network
+
+volumes:
+  postgres_data:
+  seq-logs:
+
+networks:
+  identite-network:
+    driver: bridge
