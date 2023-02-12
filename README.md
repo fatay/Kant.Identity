@@ -11,7 +11,9 @@
 
 ## Installation
 
-In appsettings.json file, we have a UserDbConnectionString setting. After configuring this, start the application on Visual Studio or you can use .NET CLI;
+In appsettings.json file, we have a UserDbConnectionString setting. After configuring this, create "Identite" database using init.sql file which located in IdentiteDB folder.
+
+Start the application on Visual Studio or you can use .NET CLI;
 
 ```sh
 dotnet run
