@@ -1,5 +1,5 @@
 # Identite
-#### Authorization & Authentication Operations using .NET6 Minimal APIs, Fluent Validation, Microsoft Identity, Serilog and SEQ
+#### Authentication Operations using .NET6 Minimal APIs, Fluent Validation, Microsoft Identity, Serilog and SEQ
 
 ## Features
 
@@ -11,13 +11,7 @@
 
 ## Installation
 
-In appsettings.json file, we have a UserDbConnectionString setting. After setting the connection string, install the seq image and run on Docker container:
-
-```sh
-docker run --name seq -d --restart unless-stopped -e ACCEPT_EULA=Y -p 5341:80 datalust/seq:latest
-```
-
-and start the application on Visual Studio or you can use .NET CLI;
+In appsettings.json file, we have a UserDbConnectionString setting. After setting the connection string, start the application on Visual Studio or you can use .NET CLI;
 
 ```sh
 dotnet run
